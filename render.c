@@ -11,20 +11,20 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 color) {
 }
 
 void draw_cursor(SDL_Surface *surface, Cursor *c) {
-	int cx = c->x;
-	int cy = c->y;
+	double cx = c->x;
+	double cy = c->y;
 	int w = c->width;
 	int h = c->height;
 
-	double angle = c->direction;
+	double angle = c->direction * M_PI / 180.0;
 	double sina = sin(angle);
 	double cosa = cos(angle);
 
 	// Calculate vertices
-	int x1 = -w/2, y1 = -h/2;
-	int x2 = w/2, y2 = -h/2;
-	int x3 = w/2, y3 = h/2;
-	int x4 = -w/2, y4 = h/2;
+	double x1 = -w/2.0, y1 = -h/2.0;
+	double x2 = w/2.0, y2 = -h/2.0;
+	double x3 = w/2.0, y3 = h/2.0;
+	double x4 = -w/2.0, y4 = h/2.0;
 
 	// Rotate vertices (local coordinates)
 	double x1p = x1 * cosa - y1 * sina, y1p = x1 * sina + y1 * cosa;
@@ -48,12 +48,28 @@ void draw_cursor(SDL_Surface *surface, Cursor *c) {
 	double min_y = fmin(fmin(y1p, y2p), fmin(y3p, y4p));
 	double max_y = fmax(fmax(y1p, y2p), fmax(y3p, y4p));
 
+	// Cross product precomputation
+	double e1x = x2p - x1p;
+	double e1y = y2p - y1p;
+	double e2x = x3p - x2p;
+	double e2y = y3p - y2p;
+	double e3x = x4p - x3p;
+	double e3y = y4p - y3p;
+	double e4x = x1p - x4p;
+	double e4y = y1p - y4p;
 
-	// Rendering TODO: actually render the rectangle
-	for (int y = (int) min_y; y < (int) max_y; y++) {
-		for (int x = (int) min_x; x < (int) max_x; x++) {
+	// Rendering 
+	for (int y = (int) floor(min_y); y < (int) ceil(max_y); y++) {
+		for (int x = (int) floor(min_x); x < (int) ceil(max_x); x++) {
+			double cross1 = (e1x) * (y - y1p) - (e1y) * (x - x1p);	
+			double cross2 = (e2x) * (y - y2p) - (e2y) * (x - x2p);	
+			double cross3 = (e3x) * (y - y3p) - (e3y) * (x - x3p);	
+			double cross4 = (e4x) * (y - y4p) - (e4y) * (x - x4p);	
 
-			put_pixel(surface, x, y, 0x00FF0000);
+			if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0)
+			|| (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0)) {
+				put_pixel(surface, x, y, 0x00FF0000);
+			}
 		}
 	}
 }
