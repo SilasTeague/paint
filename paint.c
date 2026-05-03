@@ -6,7 +6,9 @@
 #define WIDTH 900
 #define HEIGHT 600
 
-#define CURSOR_DEFAULTS {WIDTH / 2.0, HEIGHT / 2.0, 0, 0, 1, 0, 40, 10}
+#define CURSOR_DEFAULTS {WIDTH / 2.0, HEIGHT / 2.0, 90, 0, 1, 0, 10, 40}
+
+void process_input(Cursor *c);
 
 int main() {
 	int done = 0;
@@ -30,6 +32,7 @@ int main() {
 		}
 	
 		SDL_FillRect(surface, NULL, 0x00000000);
+		process_input(&cursor);
 		update_cursor(&cursor);
 		draw_cursor(surface, &cursor);
 		SDL_UpdateWindowSurface(window);
@@ -45,4 +48,25 @@ int main() {
 
 	return 0;
 	
+}
+
+
+void process_input(Cursor *c) {
+	const Uint8 *keyboard = SDL_GetKeyboardState(NULL);
+	if (keyboard[SDL_SCANCODE_W]) {
+		c->velocity += 2;
+	}
+	if (keyboard[SDL_SCANCODE_S]) {
+		c->velocity -= 2;
+	}
+	if (keyboard[SDL_SCANCODE_A]) {
+		c->angular_velocity -= 2;
+	}
+	if (keyboard[SDL_SCANCODE_D]) {
+		c->angular_velocity += 2;
+	}
+	if (keyboard[SDL_SCANCODE_C]) {
+		c->x = WIDTH / 2.0;
+		c->y = HEIGHT / 2.0;
+	}
 }

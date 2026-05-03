@@ -13,8 +13,8 @@ void put_pixel(SDL_Surface *surface, int x, int y, Uint32 color) {
 void draw_cursor(SDL_Surface *surface, Cursor *c) {
 	double cx = c->x;
 	double cy = c->y;
-	int w = c->width;
-	int h = c->height;
+	double w = c->width;
+	double h = c->height;
 
 	double angle = c->direction * M_PI / 180.0;
 	double sina = sin(angle);
