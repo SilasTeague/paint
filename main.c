@@ -3,6 +3,7 @@
 #include "cursor.h"
 #include "render.h"
 #include "input.h"
+#include "canvas.h"
 
 #define WIDTH 900
 #define HEIGHT 600
@@ -17,6 +18,8 @@ int main() {
 
 	SDL_Window *window = SDL_CreateWindow("Paint", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, 0);
 	SDL_Surface *surface = SDL_GetWindowSurface(window);
+	Canvas canvas;
+	initialize_canvas(&canvas, surface);
 
 	Cursor cursor = CURSOR_DEFAULTS; 
 
@@ -30,7 +33,11 @@ int main() {
 			}
 		}
 	
+
+
 		SDL_FillRect(surface, NULL, 0x00000000);
+		memcpy(surface->pixels, canvas.pixels, sizeof(uint32_t) * canvas.width * canvas.height);
+
 		process_input(&cursor, window);
 		update_cursor(&cursor);
 		draw_cursor(surface, &cursor);
