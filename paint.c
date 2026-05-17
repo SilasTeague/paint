@@ -1,16 +1,16 @@
-#include "render.h"
-#include <math.h>
+#include "paint.h"
 
-void put_pixel_surface(SDL_Surface *surface, int x, int y, Uint32 color) {
-	if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) {
+void put_pixel_canvas(Canvas *canvas, int x, int y, Uint32 color) {
+	if (x < 0 || x >= canvas->width || y < 0 || y >= canvas->height) {
 		return;
 	}
-	Uint32 *pixels = (Uint32 *) surface->pixels;
+	Uint32 *pixels = (Uint32 *) canvas->pixels;
 
-	pixels[(y * surface->pitch / 4) + x] = color;
+	pixels[(y * canvas->width) + x] = color;
 }
 
-void draw_cursor(SDL_Surface *surface, Cursor *c) {
+
+void paint(Canvas *canvas, Cursor *c) {
 	double cx = c->x;
 	double cy = c->y;
 	double w = c->width;
@@ -68,12 +68,8 @@ void draw_cursor(SDL_Surface *surface, Cursor *c) {
 
 			if ((cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0)
 			|| (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0)) {
-				put_pixel_surface(surface, x, y, 0x00FF0000);
+				put_pixel_canvas(canvas, x, y, 0x0000FF00);
 			}
 		}
 	}
 }
-
-
-
-

@@ -38,7 +38,7 @@ int main() {
 		SDL_FillRect(surface, NULL, 0x00000000);
 		memcpy(surface->pixels, canvas.pixels, sizeof(uint32_t) * canvas.width * canvas.height);
 
-		process_input(&cursor, window);
+		process_input(&cursor, window, &canvas, surface);
 		update_cursor(&cursor);
 		draw_cursor(surface, &cursor);
 		SDL_UpdateWindowSurface(window);
